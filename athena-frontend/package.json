@@ -1,15 +1,55 @@
 {
-  "name": "athena_frontend",
+  "name": "athena-exam",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "main": "./electron/main.cjs",
+  "description": "Athena Secure Exam Proctoring Application",
+  "author": "Athena",
   "scripts": {
     "dev:react": "vite",
     "dev:electron": "electron .",
     "build": "vite build",
+    "build:dmg": "vite build && electron-builder --mac dmg --arm64",
     "lint": "eslint .",
     "preview": "vite preview"
+  },
+  "build": {
+    "appId": "com.athena.exam",
+    "productName": "Athena Exam",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/**/*",
+      "package.json"
+    ],
+    "mac": {
+      "target": [
+        {
+          "target": "dmg",
+          "arch": ["arm64"]
+        }
+      ],
+      "category": "public.app-category.education",
+      "identity": null
+    },
+    "dmg": {
+      "title": "Athena Exam",
+      "contents": [
+        {
+          "x": 130,
+          "y": 220
+        },
+        {
+          "x": 410,
+          "y": 220,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ]
+    }
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.3.3",
@@ -23,6 +63,7 @@
     "@types/react-dom": "^19.2.7",
     "@vitejs/plugin-react": "^6.1.1",
     "electron": "^44.4.5",
+    "electron-builder": "^26.18.0",
     "eslint": "^10.10.0",
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.6",

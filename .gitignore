@@ -7,3 +7,5 @@ athena_backend/
 athena_frontend/
 athena-frontend/electron/cameraFeed/*.jpeg
 athena-frontend/electron/cameraFeed/*.jpg
+release/
+athena-frontend/release/
