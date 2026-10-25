@@ -51,9 +51,10 @@ mkdir -p "$STAGING"
 cp -R "$APP_DIR" "$STAGING/"
 ln -s /Applications "$STAGING/Applications"
 
-rm -f "release/Athena-Exam-1.0.0-Lite.dmg"
-hdiutil create -srcfolder "$STAGING" -volname "Athena Exam" -format UDZO -ov "release/Athena-Exam-1.0.0-Lite.dmg"
+rm -f "release/Athena-Exam.dmg" "release/Athena-Exam-1.0.0-Lite.dmg"
+hdiutil create -srcfolder "$STAGING" -volname "Athena Exam" -format UDZO -ov "release/Athena-Exam.dmg"
+cp "release/Athena-Exam.dmg" "release/Athena-Exam-1.0.0-Lite.dmg"
 rm -rf "$STAGING"
 
-DMG_SIZE=$(du -h "release/Athena-Exam-1.0.0-Lite.dmg" | cut -f1)
-echo "✅ Successfully generated release/Athena-Exam-1.0.0-Lite.dmg ($DMG_SIZE)"
+DMG_SIZE=$(du -h "release/Athena-Exam.dmg" | cut -f1)
+echo "✅ Successfully generated release/Athena-Exam.dmg ($DMG_SIZE)"

@@ -6,7 +6,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKUIDelegate, WKNavigationDe
     var webView: WKWebView!
 
     func applicationDidFinishLaunching(_ notification: Notification) {
-        let rect = NSRect(x: 0, y: 0, width: 1100, height: 750)
+        let rect = NSRect(x: 0, y: 0, width: 1100, height: 780)
         window = NSWindow(
             contentRect: rect,
             styleMask: [.titled, .closable, .miniaturizable, .resizable],
@@ -15,8 +15,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKUIDelegate, WKNavigationDe
         )
         window.center()
         window.title = "Athena Exam Proctor"
+        window.minSize = NSSize(width: 850, height: 600)
 
         let config = WKWebViewConfiguration()
+        config.allowsAirPlayForMediaPlayback = false
+        config.mediaTypesRequiringUserActionForPlayback = []
         
         let contentController = WKUserContentController()
         contentController.add(self, name: "nativeApp")
@@ -34,14 +37,25 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKUIDelegate, WKNavigationDe
             },
             startTest: (mins = 60) => {
                 window._examEndTime = Date.now() + mins * 60 * 1000;
-                return Promise.resolve();
+                return Promise.resolve(window._examEndTime);
             },
             showExamRules: () => {
-                const ok = confirm("Exam Rules & Instructions:\\n1. Do not switch tabs or leave this application.\\n2. Periodic camera snapshots will be recorded for proctoring.\\n3. The timer begins immediately.\\n4. Any cheating results in 0 marks.");
+                const ok = confirm("Please follow these exam instructions:\\n\\n1. Do not switch tabs or leave this application.\\n2. Periodic camera snapshots will be recorded for proctoring.\\n3. The timer begins immediately upon acceptance.\\n4. Any unfair means or cheating will result in 0 marks.");
                 return Promise.resolve(ok ? 1 : 0);
             },
             savePhoto: (buffer) => {
-                window.webkit.messageHandlers.nativeApp.postMessage({ action: 'savePhoto' });
+                try {
+                    const bytes = new Uint8Array(buffer);
+                    let binary = '';
+                    const len = bytes.byteLength;
+                    for (let i = 0; i < len; i++) {
+                        binary += String.fromCharCode(bytes[i]);
+                    }
+                    const b64 = btoa(binary);
+                    window.webkit.messageHandlers.nativeApp.postMessage({ action: 'savePhoto', data: b64 });
+                } catch (e) {
+                    console.warn('savePhoto error:', e);
+                }
                 return Promise.resolve({ success: true });
             },
             getDesktopSources: () => Promise.resolve([]),
@@ -109,6 +123,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKUIDelegate, WKNavigationDe
         if message.name == "nativeApp", let dict = message.body as? [String: Any], let action = dict["action"] as? String {
             if action == "fullScreen" {
                 window.toggleFullScreen(nil)
+            } else if action == "savePhoto", let b64 = dict["data"] as? String, let data = Data(base64Encoded: b64) {
+                let desktop = FileManager.default.urls(for: .desktopDirectory, in: .userDomainMask).first!
+                let feedDir = desktop.appendingPathComponent("AthenaCameraFeed")
+                try? FileManager.default.createDirectory(at: feedDir, withIntermediateDirectories: true, attributes: nil)
+                let fileUrl = feedDir.appendingPathComponent("\(Int(Date().timeIntervalSince1970 * 1000)).jpeg")
+                try? data.write(to: fileUrl)
             }
         }
     }
