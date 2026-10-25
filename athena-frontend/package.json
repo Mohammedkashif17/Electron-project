@@ -11,6 +11,7 @@
     "dev:electron": "electron .",
     "build": "vite build",
     "build:dmg": "vite build && electron-builder --mac dmg --arm64",
+    "build:dmg:lite": "bash build-lite-dmg.sh",
     "lint": "eslint .",
     "preview": "vite preview"
   },
