@@ -5,3 +5,5 @@ dist-ssr
 .DS_Store
 athena_backend/
 athena_frontend/
+athena-frontend/electron/cameraFeed/*.jpeg
+athena-frontend/electron/cameraFeed/*.jpg

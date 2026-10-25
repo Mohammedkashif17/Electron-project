@@ -22,7 +22,7 @@ This starts the backend server at `http://localhost:3000`. Leave this terminal r
 ## 3. Set up the frontend
 Open a **second** terminal and run:
 ```bash
-cd athena-exam/athena-frontend
+cd athena-frontend
 npm install
 npm install --save-dev electron
 npm run dev:react
@@ -32,7 +32,7 @@ This starts the Vite dev server at `http://localhost:5173`. Leave this terminal 
 ## 4. Launch the Electron app
 Open a **third** terminal and run:
 ```bash
-cd athena-exam/athena-frontend
+cd athena-frontend
 npm run dev:electron
 ```
 This opens the Electron desktop window, which loads the app from the Vite dev server.
